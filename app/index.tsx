@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, StatusBar, TextInput } from "react-native";
-
+import UUID from 'react-native-uuid';
 
 export default function Index() {
 
@@ -79,9 +79,9 @@ export default function Index() {
   });
 
   const [items, setItems] = useState([
-    { id: '1', name: 'Tea', count: 0 },
-    { id: '2', name: 'Coffee', count: 0 },
-    { id: '3', name: 'Dosa', count: 0 }
+    { id: UUID.v4(), name: 'Tea', count: 0 },
+    { id: UUID.v4(), name: 'Coffee', count: 0 },
+    { id: UUID.v4(), name: 'Dosa', count: 0 }
   ]);
   const [newItemName, setNewItemName] = useState(''); // To capture the name of the new item
 
@@ -106,7 +106,7 @@ export default function Index() {
     if (!newItemName.trim()) return; // Do not add empty or whitespace-only items
 
     const newItem = {
-      id: String(items.length + 1),  // Simple ID generation (could be improved)
+      id: UUID.v4(),  // Simple ID generation (could be improved)
       name: newItemName,
       count: 0,
     };
