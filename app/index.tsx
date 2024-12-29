@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, Sta
 import UUID from 'react-native-uuid';
 
 export default function Index() {
-
   const colorScheme = useColorScheme(); // Detect light or dark mode
   const fontColorCode = colorScheme === 'dark' ? '#FFFFFF' : 'black';
   const bgColorCode = colorScheme === 'dark' ? '#15202b' : '#FFFFFF';
@@ -61,6 +60,11 @@ export default function Index() {
       color: fontColorCode, 
       fontSize: defaultFontSize
     },
+    hintText: {
+      // marginBottom: 5,
+      fontStyle: 'italic',
+      fontSize: 12
+    },
     addItemBox: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -77,6 +81,7 @@ export default function Index() {
       color: fontColorCode
     },
     editItemInput: {
+      height: 50,
       borderColor: defaultColor,
       borderWidth: 1,
       margin: 10,
@@ -197,6 +202,7 @@ export default function Index() {
   return (
     <View style={styles.rootBox}>
 
+
       <View style={styles.addItemBox}>
         <TextInput
             style={styles.addItemInput}
@@ -211,6 +217,10 @@ export default function Index() {
             <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
       </View>
+      
+      {items.length > 0 && (
+        <Text style={[styles.itemText, styles.hintText]}>Hint: click item name to edit</Text>
+      )}
 
       <FlatList
         data={items}
