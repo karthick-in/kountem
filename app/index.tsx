@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, StatusBar, TextInput } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, StatusBar, TextInput, Modal, Button } from "react-native";
 import UUID from 'react-native-uuid';
 
 export default function Index() {
@@ -39,6 +39,7 @@ export default function Index() {
       fontSize: 25
     },
     removeButton: {
+      padding: 10
     },
     removeButtonText: {
       fontWeight: 'bold',
@@ -66,16 +67,39 @@ export default function Index() {
       alignItems: 'center',
       marginBottom: 10
     },
-    input: {
+    addItemInput: {
       height: 50,
       borderColor: defaultColor,
       borderWidth: 1,
       width: '60%',
       paddingLeft: 10,
       borderRadius: 50,
-      color: fontColorCode,
-      placeholderTextColor: fontColorCode
+      color: fontColorCode
     },
+    editItemInput: {
+      borderColor: defaultColor,
+      borderWidth: 1,
+      margin: 10,
+      paddingLeft: 10,
+      borderRadius: 50,
+      color: fontColorCode,
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent background
+    },
+    modalContainer: {
+      width: '80%',
+      padding: 20,
+      backgroundColor: bgColorCode,
+      borderRadius: 50,
+    },
+    modalEditButtonsBox: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    }
   });
 
   const [items, setItems] = useState([
@@ -84,9 +108,13 @@ export default function Index() {
     { id: UUID.v4(), name: 'Dosa', count: 0 }
   ]);
   const [newItemName, setNewItemName] = useState(''); // To capture the name of the new item
+  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [editItemId, setEditItemId] = useState(''); // State for the first input field
+  const [editItemName, setEditItemName] = useState(''); // State for the first input field
+  const [editItemCount, setEditItemCount] = useState(''); // State for the second input field
 
   // Function to increment or decrement the count
-  const updateCount = (id, action) => {
+  const updateItemCount = (id, action) => {
     setItems(prevItems =>
       prevItems.map(item =>
         item.id === id
@@ -115,22 +143,46 @@ export default function Index() {
     setNewItemName(''); // Clear the input after adding the item
   };
 
+  const openEditModal = (item) => {
+    setEditItemId(item.id);
+    setEditItemName(item.name);
+    setEditItemCount(String(item.count));
+    setModalVisible(true);    
+  }
+
+  const saveEditModal = () => {    
+    setItems(prevItems =>
+      prevItems.map(item =>
+        item.id === editItemId
+          ? { ...item, name: editItemName, count: isNaN(+editItemCount) ? item.count: Number(editItemCount) }
+          : item
+      )
+    );
+
+    closeEditModal(); // Close modal after submitting
+  };
+
+  const closeEditModal = () => {
+    setModalVisible(false);
+  }
+
+
   // Render each item in the list
   const renderItem = ({ item }) => (
       <View style={styles.itemsBox}>
 
         <TouchableOpacity style={[styles.button, styles.counterButton]}
-          onPress={() => updateCount(item.id, '-')}>
+          onPress={() => updateItemCount(item.id, '-')}>
             <Text style={styles.counterButtonText}>-</Text>
         </TouchableOpacity>
 
         <View style={styles.itemTextsBox}>
-          <Text style={styles.itemText}>{item.name}</Text>
-          <Text style={styles.itemText}>{item.count}</Text>
+          <Text style={styles.itemText} onPress={() => openEditModal(item)}>{item.name}</Text>
+          <Text style={styles.itemText} onPress={() => openEditModal(item)}>{item.count}</Text>
         </View>
 
         <TouchableOpacity style={[styles.button, styles.counterButton]}
-          onPress={() => updateCount(item.id, '+')}>
+          onPress={() => updateItemCount(item.id, '+')}>
             <Text style={styles.counterButtonText}>+</Text>
         </TouchableOpacity>
 
@@ -147,7 +199,7 @@ export default function Index() {
 
       <View style={styles.addItemBox}>
         <TextInput
-            style={styles.input}
+            style={styles.addItemInput}
             placeholder="Type new..."
             placeholderTextColor={defaultColor}
             value={newItemName}
@@ -165,6 +217,40 @@ export default function Index() {
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            
+            <TextInput
+              style={styles.editItemInput}
+              value={editItemName}
+              onChangeText={setEditItemName}
+            />            
+            <TextInput
+              style={styles.editItemInput}
+              value={editItemCount}
+              onChangeText={setEditItemCount}
+            />
+
+            <View style={styles.modalEditButtonsBox}>
+              <TouchableOpacity style={[styles.button, styles.addButton]}
+                onPress={() => closeEditModal()}>
+                  <Text style={styles.addButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.addButton]}
+                onPress={() => saveEditModal()}>
+                  <Text style={styles.addButtonText}>Edit</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
     </View>
   );
