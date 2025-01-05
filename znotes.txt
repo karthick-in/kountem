@@ -2,3 +2,6 @@ npx expo start
 
 https://docs.expo.dev/build-reference/apk/
 eas build -p android --profile development
+eas build -p android --profile preview
+eas build -p android --profile production
+expo build:android -t app-bundle
