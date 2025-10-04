@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, StatusBar, TextInput, Modal, Button } from "react-native";
+import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import UUID from 'react-native-uuid';
 
 export default function Index() {
@@ -14,7 +15,7 @@ export default function Index() {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: bgColorCode,
-      paddingTop: StatusBar.currentHeight + 20 || 0,
+      marginTop: StatusBar.currentHeight || 0,
     },
     button: {
       justifyContent: 'center',
@@ -155,11 +156,20 @@ export default function Index() {
     setModalVisible(true);    
   }
 
-  const saveEditModal = () => {    
+  const saveEditModal = () => {
+    // validate
+    if(editItemName == '') { // TODO: add error message on popup
+      return;
+    }
+    if(!isNaN(+editItemCount) || Number(editItemCount) < 0) {
+      return
+    }
+
+    // save
     setItems(prevItems =>
       prevItems.map(item =>
         item.id === editItemId
-          ? { ...item, name: editItemName, count: isNaN(+editItemCount) ? item.count: Number(editItemCount) }
+          ? { ...item, name: editItemName, count: Number(editItemCount) }
           : item
       )
     );
@@ -200,8 +210,10 @@ export default function Index() {
   );
 
   return (
-    <View style={styles.rootBox}>
+   <SafeAreaProvider>
+    <SafeAreaView style={styles.rootBox}>
 
+    {/* <View style={styles.rootBox}> */}
 
       <View style={styles.addItemBox}>
         <TextInput
@@ -255,13 +267,16 @@ export default function Index() {
               </TouchableOpacity>
               <TouchableOpacity style={[styles.button, styles.addButton]}
                 onPress={() => saveEditModal()}>
-                  <Text style={styles.addButtonText}>Edit</Text>
+                  <Text style={styles.addButtonText}>Save</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
 
-    </View>
+    {/* </View> */}
+    
+    </SafeAreaView>
+   </SafeAreaProvider>
   );
 }
