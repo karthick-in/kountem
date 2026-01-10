@@ -157,19 +157,22 @@ export default function Index() {
   }
 
   const saveEditModal = () => {
+    let _editItemName = editItemName.trim()
+    let _editItemCount = editItemCount.trim()
+
     // validate
-    if(editItemName == '') { // TODO: add error message on popup
+    if(_editItemName == '') { // TODO: add error message on popup
       return;
     }
-    if(!isNaN(+editItemCount) || Number(editItemCount) < 0) {
-      return
+    if (!/^\d+$/.test(_editItemCount) || Number(_editItemCount) < 0) { // not a non-negative integer
+      return;
     }
 
     // save
     setItems(prevItems =>
       prevItems.map(item =>
         item.id === editItemId
-          ? { ...item, name: editItemName, count: Number(editItemCount) }
+          ? { ...item, name: _editItemName, count: Number(_editItemCount) }
           : item
       )
     );
