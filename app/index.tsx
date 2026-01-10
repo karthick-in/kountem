@@ -109,9 +109,9 @@ export default function Index() {
   });
 
   const [items, setItems] = useState([
-    { id: UUID.v4(), name: 'A', count: 0 },
-    { id: UUID.v4(), name: 'B', count: 0 },
-    { id: UUID.v4(), name: 'C', count: 0 }
+    { id: UUID.v4(), name: 'Alpha', count: 0 },
+    { id: UUID.v4(), name: 'Beta', count: 0 },
+    { id: UUID.v4(), name: 'Gamma', count: 0 }
   ]);
   const [newItemName, setNewItemName] = useState(''); // To capture the name of the new item
   const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
