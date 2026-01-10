@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, StatusBar, TextInput, Modal, Button } from "react-native";
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import UUID from 'react-native-uuid';
@@ -109,15 +109,20 @@ export default function Index() {
   });
 
   const [items, setItems] = useState([
-    { id: UUID.v4(), name: 'Tea', count: 0 },
-    { id: UUID.v4(), name: 'Coffee', count: 0 },
-    { id: UUID.v4(), name: 'Dosa', count: 0 }
+    { id: UUID.v4(), name: 'A', count: 0 },
+    { id: UUID.v4(), name: 'B', count: 0 },
+    { id: UUID.v4(), name: 'C', count: 0 }
   ]);
   const [newItemName, setNewItemName] = useState(''); // To capture the name of the new item
   const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
   const [editItemId, setEditItemId] = useState(''); // State for the first input field
   const [editItemName, setEditItemName] = useState(''); // State for the first input field
   const [editItemCount, setEditItemCount] = useState(''); // State for the second input field
+  const [modalInputFocus, setModalInputFocus] = useState('name'); // 'name' or 'count'
+
+  // Create refs for both text boxes
+  const modalNameRef = useRef<TextInput>(null);
+  const modalCountRef = useRef<TextInput>(null);
 
   // Function to increment or decrement the count
   const updateItemCount = (id, action) => {
@@ -149,11 +154,12 @@ export default function Index() {
     setNewItemName(''); // Clear the input after adding the item
   };
 
-  const openEditModal = (item) => {
+  const openEditModal = (item, fromInput='name') => {
     setEditItemId(item.id);
     setEditItemName(item.name);
     setEditItemCount(String(item.count));
-    setModalVisible(true);    
+    setModalInputFocus(fromInput);
+    setModalVisible(true);
   }
 
   const saveEditModal = () => {
@@ -184,6 +190,21 @@ export default function Index() {
     setModalVisible(false);
   }
 
+  const handleModalShow = () => {
+    // Set focus
+    if (modalInputFocus === 'name') {
+      const len = editItemName.length;
+
+      modalNameRef.current?.focus();
+      modalNameRef.current?.setSelection(len, len);
+    } else if (modalInputFocus === 'count') {
+      const len = editItemCount.length;
+
+      modalCountRef.current?.focus();
+      modalCountRef.current?.setSelection(len, len);
+    }
+  };
+
 
   // Render each item in the list
   const renderItem = ({ item }) => (
@@ -195,8 +216,8 @@ export default function Index() {
         </TouchableOpacity>
 
         <View style={styles.itemTextsBox}>
-          <Text style={styles.itemText} onPress={() => openEditModal(item)}>{item.name}</Text>
-          <Text style={styles.itemText} onPress={() => openEditModal(item)}>{item.count}</Text>
+          <Text style={styles.itemText} onPress={() => openEditModal(item, 'name')}>{item.name}</Text>
+          <Text style={styles.itemText} onPress={() => openEditModal(item, 'count')}>{item.count}</Text>
         </View>
 
         <TouchableOpacity style={[styles.button, styles.counterButton]}
@@ -247,17 +268,20 @@ export default function Index() {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
+        onShow={handleModalShow}
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             
             <TextInput
+              ref={modalNameRef}
               style={styles.editItemInput}
               value={editItemName}
               onChangeText={setEditItemName}
             />            
             <TextInput
+              ref={modalCountRef}
               style={styles.editItemInput}
               value={editItemCount}
               onChangeText={setEditItemCount}
