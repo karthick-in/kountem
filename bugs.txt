@@ -1,9 +1,0 @@
-Bugs:
-Empty Item name in edit modal
-Item name limit
-Item count limit
-
-Features:
-separate stylesheet in a file
-Replace UUId pack with custom code
-Item price feature (in decimal)
