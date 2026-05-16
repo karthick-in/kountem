@@ -34,7 +34,6 @@ Add items, increase or decrease counts in a clean and simple interface.
     
     eas build -p android --profile development
     eas build -p android --profile preview
-    eas build -p android --profile friend-share
     eas build -p android --profile production
 
    Refer https://docs.expo.dev/build-reference/apk/
