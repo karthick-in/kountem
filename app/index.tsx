@@ -1,151 +1,14 @@
-import {useRef, useState} from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, StatusBar, TextInput, Modal, Button, Keyboard } from "react-native";
+import {useRef, useState, useMemo} from 'react';
+import { Text, View, TouchableOpacity, useColorScheme, FlatList, TextInput, Modal } from "react-native";
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import UUID from 'react-native-uuid';
 import { Ionicons } from '@expo/vector-icons';
+import { getStyles, COLORS } from './index.styles';
 
 export default function Index() {
   const colorScheme = useColorScheme(); // Detect light or dark mode
-  const fontColorCode = colorScheme === 'dark' ? '#FFFFFF' : 'black';
-  const bgColorCode = colorScheme === 'dark' ? '#15202b' : '#FFFFFF';
-  const defaultFontSize = 18;
-  const defaultColor = 'grey';
-  const styles = StyleSheet.create({
-    rootBox: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: bgColorCode,
-      marginTop: StatusBar.currentHeight || 0,
-    },
-    button: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 50,
-      margin: 10
-    },
-    addButton: {
-      backgroundColor: defaultColor,
-      padding: 15
-    },
-    addButtonText: {
-      fontWeight: 'bold'
-    },
-    counterButton: {
-      backgroundColor: defaultColor,
-      padding: 30
-    },
-    counterButtonText: {
-      fontWeight: 'bold',
-      fontSize: 25
-    },
-    removeButton: {
-      padding: 10
-    },
-    removeButtonText: {
-      fontWeight: 'bold',
-      fontSize: 22,
-      color: 'red'
-    },
-    itemsBox: {
-      justifyContent: 'space-between',
-      alignItems: 'center', 
-      flexDirection: 'row'
-    },
-    itemTextsBox: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center', 
-      padding: 12,     
-    },
-    itemText: {
-      // ...StyleSheet.flatten(styles0.text),  // This will inherit styles.textStyle
-      color: fontColorCode, 
-      fontSize: defaultFontSize
-    },
-    hintText: {
-      // marginBottom: 5,
-      fontStyle: 'italic',
-      fontSize: 12
-    },
-    addItemBox: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: 10,
-      paddingHorizontal: 10,
-    },
-    addItemInput: {
-      height: 50,
-      borderColor: defaultColor,
-      borderWidth: 1,
-      flex: 1,
-      paddingLeft: 15,
-      borderRadius: 50,
-      color: fontColorCode,
-      marginRight: 5,
-    },
-    editItemInput: {
-      height: 50,
-      borderColor: defaultColor,
-      borderWidth: 1,
-      margin: 10,
-      paddingLeft: 10,
-      borderRadius: 50,
-      color: fontColorCode,
-    },
-    modalOverlay: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent background
-    },
-    modalContainer: {
-      width: '80%',
-      padding: 20,
-      backgroundColor: bgColorCode,
-      borderRadius: 25,
-    },
-    modalEditButtonsBox: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-    },
-    hintIcon: {
-      marginLeft: 5,
-    },
-    tooltipContainer: {
-      width: '85%',
-      padding: 20,
-      backgroundColor: bgColorCode,
-      borderRadius: 20,
-      elevation: 5,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-    },
-    tooltipTitle: {
-      fontWeight: 'bold',
-      fontSize: 20,
-      marginBottom: 15,
-      color: fontColorCode,
-      textAlign: 'center',
-    },
-    tooltipPoint: {
-      fontSize: 16,
-      marginBottom: 10,
-      color: fontColorCode,
-      lineHeight: 22,
-    },
-    closeTooltipButton: {
-      marginTop: 15,
-      alignSelf: 'center',
-      backgroundColor: defaultColor,
-      paddingVertical: 10,
-      paddingHorizontal: 25,
-      borderRadius: 20,
-    }
-  });
+  const styles = useMemo(() => getStyles(colorScheme), [colorScheme]);
+  const defaultColor = COLORS.grey;
 
   const [items, setItems] = useState([
     { id: UUID.v4(), name: 'Alpha', count: 0 },
@@ -256,7 +119,7 @@ export default function Index() {
         </TouchableOpacity>
 
         <View style={styles.itemTextsBox}>
-          <Text style={styles.itemText} numberOfLines={1} ellipsizeMode="tail" onPress={() => openEditModal(item, 'name')}>{item.name}</Text>
+          <Text style={styles.itemText} onPress={() => openEditModal(item, 'name')}>{item.name}</Text>
           <Text style={styles.itemText} onPress={() => openEditModal(item, 'count')}>{item.count}</Text>
         </View>
 
