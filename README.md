@@ -1,6 +1,15 @@
-# Welcome to your Expo app 👋
+# Kountem
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Kountem is a simple cross-platform mobile app built with React Native and Expo.
+It's designed to help users track item quantities during group orders (e.g., when ordering food with friends) through a clean interface for adding items and adjusting counts.
+
+Add items, increase or decrease counts in a clean and simple interface.
+
+> Currently, only the Android APK build is available in the Releases page.
+
+## Screenshot
+
+![Kountem Screenshot](samples/sample1.png)
 
 ## Get started
 
@@ -16,35 +25,16 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
     npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Build from eas
+   This command will require expo login
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+    npm install -g eas-cli
+   
+   build... (choose one)
+    
+    eas build -p android --profile development
+    eas build -p android --profile preview
+    eas build -p android --profile friend-share
+    eas build -p android --profile production
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+   Refer https://docs.expo.dev/build-reference/apk/

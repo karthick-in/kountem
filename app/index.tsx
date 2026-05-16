@@ -1,7 +1,8 @@
 import {useRef, useState} from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, StatusBar, TextInput, Modal, Button } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, useColorScheme, FlatList, StatusBar, TextInput, Modal, Button, Keyboard } from "react-native";
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import UUID from 'react-native-uuid';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Index() {
   const colorScheme = useColorScheme(); // Detect light or dark mode
@@ -52,6 +53,7 @@ export default function Index() {
       flexDirection: 'row'
     },
     itemTextsBox: {
+      flex: 1,
       justifyContent: 'center',
       alignItems: 'center', 
       padding: 12,     
@@ -68,18 +70,20 @@ export default function Index() {
     },
     addItemBox: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 10
+      marginBottom: 10,
+      paddingHorizontal: 10,
     },
     addItemInput: {
       height: 50,
       borderColor: defaultColor,
       borderWidth: 1,
-      width: '60%',
-      paddingLeft: 10,
+      flex: 1,
+      paddingLeft: 15,
       borderRadius: 50,
-      color: fontColorCode
+      color: fontColorCode,
+      marginRight: 5,
     },
     editItemInput: {
       height: 50,
@@ -100,11 +104,46 @@ export default function Index() {
       width: '80%',
       padding: 20,
       backgroundColor: bgColorCode,
-      borderRadius: 50,
+      borderRadius: 25,
     },
     modalEditButtonsBox: {
       flexDirection: 'row',
       justifyContent: 'center',
+    },
+    hintIcon: {
+      marginLeft: 5,
+    },
+    tooltipContainer: {
+      width: '85%',
+      padding: 20,
+      backgroundColor: bgColorCode,
+      borderRadius: 20,
+      elevation: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
+    tooltipTitle: {
+      fontWeight: 'bold',
+      fontSize: 20,
+      marginBottom: 15,
+      color: fontColorCode,
+      textAlign: 'center',
+    },
+    tooltipPoint: {
+      fontSize: 16,
+      marginBottom: 10,
+      color: fontColorCode,
+      lineHeight: 22,
+    },
+    closeTooltipButton: {
+      marginTop: 15,
+      alignSelf: 'center',
+      backgroundColor: defaultColor,
+      paddingVertical: 10,
+      paddingHorizontal: 25,
+      borderRadius: 20,
     }
   });
 
@@ -115,6 +154,7 @@ export default function Index() {
   ]);
   const [newItemName, setNewItemName] = useState(''); // To capture the name of the new item
   const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [hintModalVisible, setHintModalVisible] = useState(false); // State for hint tooltip
   const [editItemId, setEditItemId] = useState(''); // State for the first input field
   const [editItemName, setEditItemName] = useState(''); // State for the first input field
   const [editItemCount, setEditItemCount] = useState(''); // State for the second input field
@@ -216,7 +256,7 @@ export default function Index() {
         </TouchableOpacity>
 
         <View style={styles.itemTextsBox}>
-          <Text style={styles.itemText} onPress={() => openEditModal(item, 'name')}>{item.name}</Text>
+          <Text style={styles.itemText} numberOfLines={1} ellipsizeMode="tail" onPress={() => openEditModal(item, 'name')}>{item.name}</Text>
           <Text style={styles.itemText} onPress={() => openEditModal(item, 'count')}>{item.count}</Text>
         </View>
 
@@ -252,17 +292,48 @@ export default function Index() {
          onPress={() => addItem()}>
             <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.hintIcon} 
+          onPress={() => setHintModalVisible(true)}
+        >
+          <Ionicons name="help-circle-outline" size={30} color={defaultColor} />
+        </TouchableOpacity>
       </View>
-      
-      {items.length > 0 && (
-        <Text style={[styles.itemText, styles.hintText]}>Hint: click item name to edit</Text>
-      )}
 
       <FlatList
         data={items}
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={hintModalVisible}
+        onRequestClose={() => setHintModalVisible(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay} 
+          activeOpacity={1} 
+          onPress={() => setHintModalVisible(false)}
+        >
+          <View style={styles.tooltipContainer}>
+            <Text style={styles.tooltipTitle}>How to use?</Text>
+            <Text style={styles.tooltipPoint}>• Add new items using the input box.</Text>
+            <Text style={styles.tooltipPoint}>• Use + and - buttons to adjust quantities.</Text>
+            <Text style={styles.tooltipPoint}>• Click item's name to edit it.</Text>
+            <Text style={styles.tooltipPoint}>• Click the red x to remove an item.</Text>
+            
+            <TouchableOpacity 
+              style={styles.closeTooltipButton}
+              onPress={() => setHintModalVisible(false)}
+            >
+              <Text style={styles.addButtonText}>Got it!</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       <Modal
         animationType="slide"
