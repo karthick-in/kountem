@@ -27,7 +27,7 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
     rootBox: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'stretch',
       backgroundColor: bgColorCode,
       marginTop: StatusBar.currentHeight || 0,
     },
@@ -61,11 +61,14 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
       color: 'red'
     },
     itemsBox: {
+      width: '100%',
       justifyContent: 'space-between',
       alignItems: 'center', 
-      flexDirection: 'row'
+      flexDirection: 'row',
+      paddingHorizontal: 10,
     },
     itemTextsBox: {
+      flex: 1,
       justifyContent: 'center',
       alignItems: 'center', 
       padding: 12,     
@@ -79,6 +82,7 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
       fontSize: 12
     },
     addItemBox: {
+      width: '100%',
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',

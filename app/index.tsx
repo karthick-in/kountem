@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity, useColorScheme, FlatList, TextInput, Moda
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import UUID from 'react-native-uuid';
 import { Ionicons } from '@expo/vector-icons';
-import { getStyles, COLORS } from './index.styles';
+import { getStyles, COLORS } from '../styles/index.styles';
 
 export default function Index() {
   const colorScheme = useColorScheme(); // Detect light or dark mode
@@ -95,16 +95,23 @@ export default function Index() {
 
   const handleModalShow = () => {
     // Set focus
+    const focusAndSelect = (ref: React.RefObject<TextInput>, value: string) => {
+      if (ref.current) {
+        const len = value.length;
+        ref.current.focus();
+        const input = ref.current as any;
+        if (typeof input.setSelection === 'function') {
+          input.setSelection(len, len);
+        } else if (typeof input.setSelectionRange === 'function') {
+          input.setSelectionRange(len, len);
+        }
+      }
+    };
+
     if (modalInputFocus === 'name') {
-      const len = editItemName.length;
-
-      modalNameRef.current?.focus();
-      modalNameRef.current?.setSelection(len, len);
+      focusAndSelect(modalNameRef, editItemName);
     } else if (modalInputFocus === 'count') {
-      const len = editItemCount.length;
-
-      modalCountRef.current?.focus();
-      modalCountRef.current?.setSelection(len, len);
+      focusAndSelect(modalCountRef, editItemCount);
     }
   };
 
@@ -119,8 +126,21 @@ export default function Index() {
         </TouchableOpacity>
 
         <View style={styles.itemTextsBox}>
-          <Text style={styles.itemText} onPress={() => openEditModal(item, 'name')}>{item.name}</Text>
-          <Text style={styles.itemText} onPress={() => openEditModal(item, 'count')}>{item.count}</Text>
+          <Text 
+            style={styles.itemText} 
+            onPress={() => openEditModal(item, 'name')}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {item.name}
+          </Text>
+          <Text 
+            style={styles.itemText} 
+            onPress={() => openEditModal(item, 'count')}
+            numberOfLines={1}
+          >
+            {item.count}
+          </Text>
         </View>
 
         <TouchableOpacity style={[styles.button, styles.counterButton]}
