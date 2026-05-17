@@ -1,5 +1,5 @@
-import {useRef, useState, useMemo} from 'react';
-import { Text, View, TouchableOpacity, useColorScheme, FlatList, TextInput, Modal } from "react-native";
+import {useRef, useState, useMemo, useEffect} from 'react';
+import { Text, View, TouchableOpacity, useColorScheme, FlatList, TextInput, Modal, Pressable } from "react-native";
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import UUID from 'react-native-uuid';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,7 +7,16 @@ import { getStyles, COLORS } from '../styles/index.styles';
 
 export default function Index() {
   const colorScheme = useColorScheme(); // Detect light or dark mode
-  const styles = useMemo(() => getStyles(colorScheme), [colorScheme]);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const styles = useMemo(() => {
+    return getStyles(isMounted ? colorScheme : 'light');
+  }, [colorScheme, isMounted]);
+
   const defaultColor = COLORS.grey;
 
   const [items, setItems] = useState([
@@ -26,6 +35,11 @@ export default function Index() {
   // Create refs for both text boxes
   const modalNameRef = useRef<TextInput>(null);
   const modalCountRef = useRef<TextInput>(null);
+
+  // --- MOUNT CHECK (Moved after all hooks) ---
+  if (!isMounted) {
+    return <View style={{ flex: 1, backgroundColor: COLORS.light.background }} />;
+  }
 
   // Function to increment or decrement the count
   const updateItemCount = (id, action) => {
@@ -48,7 +62,7 @@ export default function Index() {
     if (!newItemName.trim()) return; // Do not add empty or whitespace-only items
 
     const newItem = {
-      id: UUID.v4(),  // Simple ID generation (could be improved)
+      id: UUID.v4(),
       name: newItemName,
       count: 0,
     };
@@ -69,15 +83,9 @@ export default function Index() {
     let _editItemName = editItemName.trim()
     let _editItemCount = editItemCount.trim()
 
-    // validate
-    if(_editItemName == '') { // TODO: add error message on popup
-      return;
-    }
-    if (!/^\d+$/.test(_editItemCount) || Number(_editItemCount) < 0) { // not a non-negative integer
-      return;
-    }
+    if(_editItemName == '') return;
+    if (!/^\d+$/.test(_editItemCount) || Number(_editItemCount) < 0) return;
 
-    // save
     setItems(prevItems =>
       prevItems.map(item =>
         item.id === editItemId
@@ -86,7 +94,7 @@ export default function Index() {
       )
     );
 
-    closeEditModal(); // Close modal after submitting
+    closeEditModal();
   };
 
   const closeEditModal = () => {
@@ -94,7 +102,6 @@ export default function Index() {
   }
 
   const handleModalShow = () => {
-    // Set focus
     const focusAndSelect = (ref: React.RefObject<TextInput>, value: string) => {
       if (ref.current) {
         const len = value.length;
@@ -126,21 +133,30 @@ export default function Index() {
         </TouchableOpacity>
 
         <View style={styles.itemTextsBox}>
-          <Text 
-            style={styles.itemText} 
+          <Pressable 
             onPress={() => openEditModal(item, 'name')}
-            numberOfLines={1}
-            ellipsizeMode="tail"
+            style={{ width: '100%', alignItems: 'center' }}
           >
-            {item.name}
-          </Text>
-          <Text 
-            style={styles.itemText} 
+            <Text 
+              style={styles.itemText} 
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {item.name}
+            </Text>
+          </Pressable>
+          
+          <Pressable 
             onPress={() => openEditModal(item, 'count')}
-            numberOfLines={1}
+            style={{ width: '100%', alignItems: 'center' }}
           >
-            {item.count}
-          </Text>
+            <Text 
+              style={styles.itemText} 
+              numberOfLines={1}
+            >
+              {item.count}
+            </Text>
+          </Pressable>
         </View>
 
         <TouchableOpacity style={[styles.button, styles.counterButton]}
@@ -159,8 +175,6 @@ export default function Index() {
   return (
    <SafeAreaProvider>
     <SafeAreaView style={styles.rootBox}>
-
-    {/* <View style={styles.rootBox}> */}
 
       <View style={styles.addItemBox}>
         <TextInput
@@ -254,8 +268,6 @@ export default function Index() {
           </View>
         </View>
       </Modal>
-
-    {/* </View> */}
     
     </SafeAreaView>
    </SafeAreaProvider>

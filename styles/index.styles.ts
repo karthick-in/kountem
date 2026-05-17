@@ -1,4 +1,4 @@
-import { StyleSheet, StatusBar } from 'react-native';
+import { StyleSheet, StatusBar, Platform } from 'react-native';
 
 export const COLORS = {
   dark: {
@@ -6,7 +6,7 @@ export const COLORS = {
     background: '#15202b',
   },
   light: {
-    font: 'black',
+    font: '#000000',
     background: '#FFFFFF',
   },
   grey: 'grey',
@@ -16,8 +16,8 @@ export const CONSTANTS = {
   defaultFontSize: 18,
 };
 
-export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
-  const isDark = colorScheme === 'dark';
+const createStyles = (theme: 'light' | 'dark') => {
+  const isDark = theme === 'dark';
   const fontColorCode = isDark ? COLORS.dark.font : COLORS.light.font;
   const bgColorCode = isDark ? COLORS.dark.background : COLORS.light.background;
   const defaultColor = COLORS.grey;
@@ -29,7 +29,8 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
       justifyContent: 'center',
       alignItems: 'stretch',
       backgroundColor: bgColorCode,
-      marginTop: StatusBar.currentHeight || 0,
+      // StatusBar.currentHeight is only available on Android
+      marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
     button: {
       justifyContent: 'center',
@@ -42,7 +43,8 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
       padding: 15
     },
     addButtonText: {
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      color: '#000000', // Explicit color for buttons
     },
     counterButton: {
       backgroundColor: defaultColor,
@@ -50,7 +52,8 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
     },
     counterButtonText: {
       fontWeight: 'bold',
-      fontSize: 25
+      fontSize: 25,
+      color: '#000000', // Explicit color for buttons
     },
     removeButton: {
       padding: 10
@@ -75,7 +78,9 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
     },
     itemText: {
       color: fontColorCode, 
-      fontSize: defaultFontSize
+      fontSize: defaultFontSize,
+      // Fix for web production link colors if onPress is used
+      textDecorationLine: 'none',
     },
     hintText: {
       fontStyle: 'italic',
@@ -98,6 +103,7 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
       borderRadius: 50,
       color: fontColorCode,
       marginRight: 5,
+      backgroundColor: bgColorCode, // Explicit background for input
     },
     editItemInput: {
       height: 50,
@@ -107,12 +113,13 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
       paddingLeft: 10,
       borderRadius: 50,
       color: fontColorCode,
+      backgroundColor: bgColorCode,
     },
     modalOverlay: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent background
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     },
     modalContainer: {
       width: '80%',
@@ -160,4 +167,11 @@ export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
       borderRadius: 20,
     }
   });
+};
+
+const stylesLight = createStyles('light');
+const stylesDark = createStyles('dark');
+
+export const getStyles = (colorScheme: 'light' | 'dark' | null | undefined) => {
+  return colorScheme === 'dark' ? stylesDark : stylesLight;
 };

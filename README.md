@@ -25,7 +25,8 @@ Add items, increase or decrease counts in a clean and simple interface.
     npx expo start
    ```
 
-## Build from eas
+## Build
+   ### Android from EAS
    This command will require expo login
 
     npm install -g eas-cli
@@ -37,3 +38,15 @@ Add items, increase or decrease counts in a clean and simple interface.
     eas build -p android --profile production
 
    Refer https://docs.expo.dev/build-reference/apk/
+
+   ### Web from local
+    npx expo install react-dom react-native-web @expo/metro-runtime
+    npx expo start --web
+    (or)
+    set APP_BASE_URL=/kountem&&npx expo export -p web
+   
+   build...
+   
+    npx expo export --platform web
+
+   Refer https://docs.expo.dev/workflow/web/
